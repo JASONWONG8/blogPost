@@ -17,7 +17,7 @@ class CreatePostsTable extends Migration
             $table->bigIncrements('id');
             $table->string('title', 255);
             $table->string('body', 2000);
-            $table->integer('author');
+            $table->integer('user_id');
             $table->integer('total_comments')->default(0);
             $table->timestamps();
         });

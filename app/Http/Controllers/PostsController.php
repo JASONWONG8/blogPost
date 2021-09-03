@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use DB;
+use Response;
+use App\Post;
 
 class PostsController extends Controller
 {
@@ -13,7 +16,15 @@ class PostsController extends Controller
      */
     public function index()
     {
-        dd('this is index correct');
+        $author_id = '1';
+
+        $posts = DB::table('posts')
+                    ->select('id as post_id','title as post_title', 'body as post_body', 'user_id as author_id', 'total_comments as total_number_of_comments')
+                    ->where('user_id', '=', $author_id)
+                    ->orderBy('total_comments', 'desc')
+                    ->get();
+
+        return response()->json($posts, 200, [], \JSON_PRETTY_PRINT);
     }
 
     /**
@@ -45,7 +56,20 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        dd($id);
+        $author_id = '1';
+
+        if(Post::where('id', $id)->where('user_id', $author_id)->exists()){
+            
+            $post = DB::table('posts')
+                    ->select('id as post_id','title as post_title', 'body as post_body', 'user_id as author_id', 'total_comments as total_number_of_comments')
+                    ->where('id', '=', $id)
+                    ->get();
+
+            return response()->json($post, 200, [], \JSON_PRETTY_PRINT);
+        
+        } else {
+            abort(404, "data not found.");
+        }
     }
 
     /**
